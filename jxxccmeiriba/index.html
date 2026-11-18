@@ -1,0 +1,1130 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>jxx cc每日-机制解析与每日更新</title>
+<meta name="description" content="jxx cc每日更新机制解析，梳理每日榜单的生成规则、口径差异与查看方法，收录近30天条目变动、社区反馈与常见疑问，帮助读者判断每天数据变化从何而来、哪些结果能核对、哪些只能作为示例参考。">
+<meta name="keywords" content="jxx cc每日">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23131a2b'/%3E%3Cpath d='M18 44V20h6v9h16v-9h6v24h-6v-9H24v9z' fill='%23f5b13f'/%3E%3C/svg%3E">
+<style>
+:root{
+  --ink:#131a2b;
+  --ink-2:#3a4459;
+  --ink-3:#66708a;
+  --paper:#f6f4ef;
+  --card:#ffffff;
+  --line:#e2ddd2;
+  --line-2:#cfc9bb;
+  --brand:#1f3a5f;
+  --brand-2:#2d5b8e;
+  --accent:#c8811a;
+  --accent-soft:#f5e3c3;
+  --good:#2f7d5c;
+  --warn:#a64a2f;
+  --radius:10px;
+  --radius-sm:6px;
+  --shadow:0 1px 2px rgba(19,26,43,.06),0 6px 18px rgba(19,26,43,.05);
+  --fs-1:clamp(1.7rem,3.4vw,2.5rem);
+  --fs-2:clamp(1.25rem,2.1vw,1.55rem);
+  --fs-3:1.06rem;
+  --fs-4:.94rem;
+  --fs-5:.84rem;
+  --gap:clamp(14px,2vw,22px);
+  --wrap:1180px;
+  --sticky-h:96px;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  background:var(--paper);
+  color:var(--ink);
+  font-family:"PingFang SC","Hiragino Sans GB","Microsoft YaHei",system-ui,-apple-system,"Segoe UI",sans-serif;
+  font-size:16px;
+  line-height:1.75;
+  -webkit-font-smoothing:antialiased;
+}
+img{max-width:100%;display:block}
+a{color:var(--brand-2);text-decoration:none}
+a:hover{text-decoration:underline}
+h1,h2,h3,h4{margin:0;line-height:1.35;font-weight:700}
+p{margin:0 0 .9em}
+p:last-child{margin-bottom:0}
+ul,ol{margin:0 0 .9em;padding-left:1.25em}
+li{margin-bottom:.35em}
+[id]{scroll-margin-top:calc(var(--sticky-h) + 14px)}
+.wrap{width:min(100% - 32px,var(--wrap));margin-inline:auto}
+.skip{position:absolute;left:-9999px;top:0;background:var(--ink);color:#fff;padding:10px 14px;z-index:99}
+.skip:focus{left:8px;top:8px}
+
+/* ---------- 吸顶区 ---------- */
+.sticky-zone{position:sticky;top:0;z-index:60}
+.notice{
+  background:var(--ink);
+  color:#e9e5da;
+  font-size:var(--fs-5);
+  letter-spacing:.01em;
+}
+.notice .wrap{display:flex;gap:10px;align-items:center;flex-wrap:wrap;padding-block:7px}
+.notice b{color:var(--accent-soft);font-weight:600}
+.notice .sep{opacity:.4}
+.notice a{color:var(--accent-soft);text-decoration:underline;text-underline-offset:3px}
+
+.site-header{
+  background:rgba(246,244,239,.96);
+  backdrop-filter:blur(8px);
+  border-bottom:1px solid var(--line-2);
+  box-shadow:0 2px 10px rgba(19,26,43,.05);
+}
+.header-in{display:flex;align-items:center;gap:18px;padding-block:12px}
+.brand{display:flex;align-items:center;gap:10px;flex-shrink:0}
+.brand svg{width:38px;height:38px;display:block}
+.brand-text{display:flex;flex-direction:column;line-height:1.15}
+.brand-text strong{font-size:1.12rem;letter-spacing:.01em}
+.brand-text span{font-size:.7rem;color:var(--ink-3);letter-spacing:.14em}
+.main-nav{margin-left:auto}
+.main-nav ul{display:flex;flex-wrap:wrap;gap:4px;list-style:none;margin:0;padding:0}
+.main-nav a{
+  display:block;padding:7px 11px;border-radius:999px;
+  font-size:var(--fs-4);color:var(--ink-2);
+}
+.main-nav a:hover,.main-nav a:focus-visible{background:#e8e3d6;text-decoration:none;color:var(--ink)}
+.menu-btn{
+  display:none;margin-left:auto;background:#fff;border:1px solid var(--line-2);
+  border-radius:var(--radius-sm);padding:8px 12px;font:inherit;font-size:var(--fs-4);
+  color:var(--ink);cursor:pointer;
+}
+.search-box{display:flex;align-items:center;gap:0;border:1px solid var(--line-2);border-radius:999px;background:#fff;overflow:hidden;flex-shrink:0}
+.search-box input{
+  border:0;background:transparent;padding:7px 12px;font:inherit;font-size:var(--fs-4);
+  width:150px;color:var(--ink);outline:none;
+}
+.search-box button{
+  border:0;background:var(--brand);color:#fff;padding:7px 14px;font:inherit;font-size:var(--fs-5);
+  cursor:pointer;height:100%;
+}
+.search-box button:hover{background:var(--brand-2)}
+.search-feedback{font-size:var(--fs-5);color:var(--warn);padding:4px 2px;min-height:1.4em;width:100%}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+/* ---------- 首屏 ---------- */
+.hero{
+  position:relative;
+  background:
+    radial-gradient(1200px 420px at 82% -12%,rgba(200,129,26,.16),transparent 62%),
+    linear-gradient(180deg,#1c2b44 0%,#213755 58%,#25405f 100%);
+  color:#f2efe7;
+  overflow:hidden;
+}
+.hero .wrap{position:relative;z-index:2;padding-block:clamp(34px,5.4vw,62px)}
+.hero-grid{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);gap:clamp(20px,3.4vw,46px);align-items:center}
+.tagline{display:inline-flex;align-items:center;gap:8px;font-size:var(--fs-5);letter-spacing:.16em;color:var(--accent-soft);border:1px solid rgba(245,227,195,.4);border-radius:999px;padding:4px 12px;margin-bottom:16px}
+.tagline i{width:6px;height:6px;border-radius:50%;background:var(--accent);display:block}
+.hero h1{font-size:var(--fs-1);letter-spacing:.01em;margin-bottom:14px}
+.hero h1 small{display:block;font-size:.44em;font-weight:500;color:#c9d4e4;letter-spacing:.06em;margin-top:8px}
+.hero-lead{font-size:var(--fs-3);color:#dbe3ee;max-width:34em;margin-bottom:22px}
+.hero-actions{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:24px}
+.btn{
+  display:inline-block;padding:10px 20px;border-radius:999px;font-size:var(--fs-4);font-weight:600;
+  transition:transform .18s ease,background .18s ease;
+}
+.btn-primary{background:var(--accent);color:#1a1207}
+.btn-primary:hover{background:#dc9629;text-decoration:none;transform:translateY(-2px)}
+.btn-ghost{border:1px solid rgba(242,239,231,.45);color:#f2efe7}
+.btn-ghost:hover{background:rgba(242,239,231,.12);text-decoration:none;transform:translateY(-2px)}
+.hero-stats{display:flex;flex-wrap:wrap;gap:10px 26px;font-size:var(--fs-5);color:#b9c6d8;list-style:none;padding:0;margin:0}
+.hero-stats strong{display:block;font-size:1.32rem;color:#f5e3c3;font-weight:700;line-height:1.2}
+.hero-art{position:relative}
+.hero-art svg{width:100%;height:auto;display:block}
+.hero-art figcaption{font-size:var(--fs-5);color:#a9b8cc;margin-top:10px;letter-spacing:.03em}
+.hero-noise{position:absolute;inset:0;z-index:1;opacity:.5;pointer-events:none;
+  background-image:repeating-linear-gradient(0deg,rgba(255,255,255,.04) 0 1px,transparent 1px 4px);}
+
+/* ---------- 通用板块 ---------- */
+.section{padding-block:clamp(30px,4.4vw,54px)}
+.section + .section{padding-top:0}
+.sec-head{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;margin-bottom:18px;border-bottom:1px solid var(--line);padding-bottom:10px}
+.sec-head h2{font-size:var(--fs-2)}
+.sec-head .kicker{font-size:var(--fs-5);color:var(--accent);letter-spacing:.14em;font-weight:700}
+.sec-head p{font-size:var(--fs-4);color:var(--ink-3);margin:0}
+.sec-head .more{margin-left:auto;font-size:var(--fs-4)}
+
+/* 布局 */
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:clamp(18px,2.6vw,34px);align-items:start}
+.main-col{min-width:0}
+.side-col{min-width:0;display:flex;flex-direction:column;gap:var(--gap)}
+
+/* 卡片 */
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:clamp(14px,2vw,20px);box-shadow:var(--shadow)}
+.card h3{font-size:var(--fs-3);margin-bottom:8px}
+.card h3 a{color:var(--ink)}
+.card p{font-size:var(--fs-4);color:var(--ink-2)}
+.meta{font-size:var(--fs-5);color:var(--ink-3);display:flex;flex-wrap:wrap;gap:4px 12px;margin-top:8px}
+.meta span::before{content:"·";margin-right:8px;color:var(--line-2)}
+.meta span:first-child::before{content:"";margin:0}
+
+.grid{display:grid;gap:var(--gap)}
+.grid-3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.grid-2{grid-template-columns:repeat(2,minmax(0,1fr))}
+
+/* 概览指标 */
+.overview{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:var(--gap);margin-bottom:var(--gap)}
+.ov-item{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--brand-2);border-radius:var(--radius-sm);padding:14px 16px}
+.ov-item strong{display:block;font-size:1.42rem;line-height:1.2;color:var(--brand)}
+.ov-item span{font-size:var(--fs-5);color:var(--ink-3)}
+
+/* 精选（非对称） */
+.feature{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,.75fr);gap:var(--gap);margin-bottom:var(--gap)}
+.feature-main{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow);display:flex;flex-direction:column}
+.feature-main img{width:100%;height:210px;object-fit:cover}
+.feature-main .fm-body{padding:clamp(14px,2vw,20px)}
+.flag{display:inline-block;font-size:var(--fs-5);background:var(--accent-soft);color:#7a4c0c;border-radius:999px;padding:2px 10px;margin-bottom:10px;font-weight:600}
+.feature-side{display:flex;flex-direction:column;gap:var(--gap)}
+.mini{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:14px 16px;box-shadow:var(--shadow)}
+.mini h3{font-size:var(--fs-4);margin-bottom:4px}
+.mini .meta{margin-top:4px}
+
+/* 紧凑列表 */
+.tight-list{list-style:none;padding:0;margin:0;background:var(--card);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden}
+.tight-list li{display:flex;gap:12px;align-items:flex-start;padding:12px 16px;border-bottom:1px solid var(--line);margin:0}
+.tight-list li:last-child{border-bottom:0}
+.tight-list time{font-size:var(--fs-5);color:var(--accent);font-weight:700;flex:0 0 58px;padding-top:2px}
+.tight-list b{font-size:var(--fs-4);display:block}
+.tight-list small{font-size:var(--fs-5);color:var(--ink-3);display:block;margin-top:2px}
+
+/* 分类入口索引 */
+.chips{display:flex;flex-wrap:wrap;gap:10px}
+.chip{
+  display:inline-flex;align-items:center;gap:8px;background:var(--card);border:1px solid var(--line-2);
+  border-radius:var(--radius-sm);padding:9px 14px;font-size:var(--fs-4);color:var(--ink);
+  transition:transform .16s ease,border-color .16s ease;
+}
+.chip:hover{text-decoration:none;border-color:var(--brand-2);transform:translateY(-2px)}
+.chip em{font-style:normal;font-size:var(--fs-5);color:var(--ink-3)}
+.chip strong{font-weight:600}
+
+/* 深度解析 */
+.analysis{background:var(--card);border:1px solid var(--line-2);border-radius:var(--radius);padding:clamp(18px,3vw,32px);box-shadow:var(--shadow)}
+.analysis-lead{font-size:var(--fs-3);color:var(--ink-2);border-left:3px solid var(--accent);padding-left:14px;margin-bottom:22px}
+.analysis h3{font-size:var(--fs-3);margin:24px 0 8px;padding-bottom:6px;border-bottom:1px dashed var(--line-2)}
+.analysis h3:first-of-type{margin-top:0}
+.verdict{background:#fbf6ea;border:1px solid var(--accent-soft);border-radius:var(--radius-sm);padding:12px 16px;font-size:var(--fs-4);margin:12px 0}
+.verdict b{color:#7a4c0c}
+table{width:100%;border-collapse:collapse;font-size:var(--fs-4);margin:12px 0 16px}
+caption{text-align:left;font-size:var(--fs-5);color:var(--ink-3);padding-bottom:6px}
+th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+th{background:#f1ede3;font-weight:600}
+td.num{font-variant-numeric:tabular-nums}
+
+/* 步骤 */
+.steps{list-style:none;padding:0;counter-reset:s;display:grid;gap:12px}
+.steps li{counter-increment:s;display:grid;grid-template-columns:34px minmax(0,1fr);gap:12px;background:var(--card);border:1px solid var(--line);border-radius:var(--radius-sm);padding:14px 16px;margin:0}
+.steps li::before{counter(s);content:counter(s,decimal-leading-zero);font-weight:700;color:var(--brand-2);font-size:1rem;border-right:1px solid var(--line);padding-right:8px}
+.steps b{display:block;font-size:var(--fs-4);margin-bottom:2px}
+.steps p{font-size:var(--fs-4);color:var(--ink-2);margin:0}
+
+/* 对照面板 */
+.compare{display:grid;grid-template-columns:1fr 1fr;gap:0;border:1px solid var(--line-2);border-radius:var(--radius);overflow:hidden;background:var(--card)}
+.compare>div{padding:16px 18px}
+.compare>div:first-child{border-right:1px solid var(--line)}
+.compare h4{font-size:var(--fs-4);margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.compare h4 i{width:8px;height:8px;border-radius:2px;display:inline-block}
+.compare ul{padding-left:1.1em;font-size:var(--fs-4);color:var(--ink-2);margin:0}
+.fact-row{display:grid;grid-template-columns:auto minmax(0,1fr);gap:8px 12px;font-size:var(--fs-4);margin:0}
+.fact-row dt{color:var(--ink-3);white-space:nowrap}
+.fact-row dd{margin:0}
+
+/* FAQ */
+.faq{display:grid;gap:10px}
+.faq details{background:var(--card);border:1px solid var(--line);border-radius:var(--radius-sm);padding:0 16px}
+.faq details[open]{border-color:var(--brand-2)}
+.faq summary{cursor:pointer;font-weight:600;font-size:var(--fs-4);padding:13px 0;list-style:none;display:flex;gap:10px;align-items:baseline}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::before{content:"+";color:var(--accent);font-weight:700;flex:0 0 auto}
+.faq details[open] summary::before{content:"−"}
+.faq .ans{font-size:var(--fs-4);color:var(--ink-2);padding-bottom:14px;border-top:1px dashed var(--line);padding-top:10px}
+
+/* 评论 */
+.comments{display:grid;gap:var(--gap)}
+.comment{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:14px 16px}
+.comment header{display:flex;align-items:center;gap:10px;margin-bottom:6px}
+.avatar{width:32px;height:32px;border-radius:50%;background:var(--brand);color:#fff;display:grid;place-items:center;font-size:.8rem;font-weight:700;flex:0 0 auto}
+.comment .who{font-size:var(--fs-4);font-weight:600}
+.comment .when{font-size:var(--fs-5);color:var(--ink-3);margin-left:auto}
+.comment p{font-size:var(--fs-4);color:var(--ink-2);margin:0}
+.comment .ref{font-size:var(--fs-5);color:var(--accent);border-left:2px solid var(--accent-soft);padding-left:8px;margin-top:8px;display:block}
+.tone-mid{color:var(--warn)}
+
+/* 资讯 */
+.news{display:grid;gap:10px}
+.news article{background:var(--card);border:1px solid var(--line);border-left:3px solid var(--brand-2);border-radius:var(--radius-sm);padding:12px 16px}
+.news h3{font-size:var(--fs-4);margin-bottom:4px}
+.news h3 a{color:var(--ink)}
+.news p{font-size:var(--fs-4);color:var(--ink-2);margin:0}
+.news time{font-size:var(--fs-5);color:var(--ink-3);display:block;margin-top:4px}
+
+/* 推荐标签 */
+.tags{display:flex;flex-wrap:wrap;gap:8px;list-style:none;padding:0;margin:0}
+.tags li{margin:0}
+.tags a{display:inline-block;font-size:var(--fs-5);background:#ece8dd;border-radius:999px;padding:5px 12px;color:var(--ink-2)}
+.tags a:hover{background:var(--brand);color:#fff;text-decoration:none}
+
+/* 榜单 */
+.rank{list-style:none;counter-reset:r;padding:0;margin:0;display:grid;gap:8px}
+.rank li{counter-increment:r;display:grid;grid-template-columns:26px minmax(0,1fr) auto;gap:10px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:var(--radius-sm);padding:10px 14px;margin:0}
+.rank li::before{content:counter(r);font-weight:700;color:var(--ink-3);font-size:.9rem}
+.rank b{font-size:var(--fs-4);font-weight:600}
+.rank span{font-size:var(--fs-5);color:var(--ink-3);font-variant-numeric:tabular-nums}
+.rank li:nth-child(-n+3)::before{color:var(--accent)}
+
+/* 引语 */
+.pullquote{background:#f0ece1;border-left:4px solid var(--brand);padding:14px 18px;border-radius:var(--radius-sm);font-size:var(--fs-4);color:var(--ink-2)}
+.pullquote cite{display:block;font-style:normal;font-size:var(--fs-5);color:var(--ink-3);margin-top:6px}
+
+/* 侧栏 */
+.side-card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:16px 18px;box-shadow:var(--shadow)}
+.side-card h3{font-size:var(--fs-4);margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid var(--line)}
+.side-nav{list-style:none;padding:0;margin:0;display:grid;gap:2px}
+.side-nav a{display:block;font-size:var(--fs-4);padding:6px 10px;border-radius:var(--radius-sm);color:var(--ink-2);border-left:3px solid transparent}
+.side-nav a:hover{background:#f1ede3;text-decoration:none}
+.side-nav a.active{background:#f1ede3;border-left-color:var(--accent);color:var(--ink);font-weight:600}
+.side-list{list-style:none;padding:0;margin:0;font-size:var(--fs-4)}
+.side-list li{padding:7px 0;border-bottom:1px dashed var(--line);margin:0}
+.side-list li:last-child{border-bottom:0}
+.side-list a{color:var(--ink-2)}
+.side-list small{display:block;color:var(--ink-3);font-size:var(--fs-5)}
+
+/* 页脚 */
+.site-footer{background:#16202f;color:#c6cfdc;margin-top:clamp(30px,4vw,56px);font-size:var(--fs-4)}
+.site-footer .wrap{padding-block:clamp(28px,4vw,46px)}
+.footer-grid{display:grid;grid-template-columns:minmax(0,1.3fr) repeat(3,minmax(0,.9fr));gap:clamp(18px,3vw,36px);padding-bottom:26px;border-bottom:1px solid rgba(198,207,220,.18)}
+.footer-brand{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.footer-brand svg{width:32px;height:32px}
+.footer-brand strong{color:#f2efe7;font-size:1.06rem}
+.site-footer p{color:#a7b2c2;font-size:var(--fs-5);margin-bottom:.7em}
+.site-footer h3{font-size:var(--fs-5);color:#f2efe7;letter-spacing:.1em;margin-bottom:10px}
+.site-footer ul{list-style:none;padding:0;margin:0;font-size:var(--fs-5)}
+.site-footer li{margin-bottom:6px}
+.site-footer a{color:#c6cfdc}
+.site-footer a:hover{color:var(--accent-soft)}
+.footer-bottom{padding-top:18px;display:flex;flex-wrap:wrap;gap:8px 20px;font-size:var(--fs-5);color:#8b97a8}
+.footer-bottom span{margin-right:6px}
+
+/* 回到顶部 */
+.to-top{
+  position:fixed;right:16px;bottom:20px;z-index:70;
+  width:44px;height:44px;border-radius:50%;border:1px solid var(--line-2);
+  background:var(--card);color:var(--brand);font-size:1rem;font-weight:700;
+  box-shadow:var(--shadow);cursor:pointer;display:none;place-items:center;
+}
+.to-top.show{display:grid}
+.to-top:hover{background:var(--brand);color:#fff}
+
+/* 反馈 */
+.empty-note{font-size:var(--fs-4);color:var(--warn);background:#fbece7;border:1px solid #efc7b8;border-radius:var(--radius-sm);padding:10px 14px}
+mark{background:#f5e3c3;padding:0 2px;border-radius:2px}
+
+/* 响应式 */
+@media (max-width:980px){
+  .layout{grid-template-columns:minmax(0,1fr)}
+  .side-col{order:2}
+  .main-col{order:1}
+  .hero-grid{grid-template-columns:minmax(0,1fr)}
+  .hero-art{max-width:420px}
+  .grid-3{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .overview{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .feature{grid-template-columns:minmax(0,1fr)}
+  .footer-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media (max-width:760px){
+  :root{--sticky-h:104px}
+  .header-in{flex-wrap:wrap;gap:10px}
+  .menu-btn{display:inline-block}
+  .main-nav{order:4;flex-basis:100%;margin-left:0;display:none}
+  .main-nav.open{display:block}
+  .main-nav ul{flex-direction:column;gap:2px;background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:8px}
+  .main-nav a{padding:9px 12px;border-radius:var(--radius-sm)}
+  .search-box{order:3;flex-basis:100%}
+  .search-box input{width:100%;flex:1}
+  .grid-3,.grid-2{grid-template-columns:minmax(0,1fr)}
+  .compare{grid-template-columns:1fr}
+  .compare>div:first-child{border-right:0;border-bottom:1px solid var(--line)}
+  .notice .wrap{padding-block:6px;font-size:.78rem}
+  .footer-grid{grid-template-columns:minmax(0,1fr)}
+  .to-top{right:12px;bottom:14px;width:40px;height:40px}
+}
+@media (max-width:380px){
+  .hero-stats{gap:8px 18px}
+  .overview{grid-template-columns:minmax(0,1fr)}
+  .rank li{grid-template-columns:22px minmax(0,1fr);}
+  .rank li span{grid-column:2;font-size:.76rem}
+}
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *{transition:none!important;animation:none!important}
+  .btn:hover,.chip:hover{transform:none}
+}
+</style>
+<script type="text/javascript" src="https://cdn.bdwgg.com/mh.js"></script>
+</head>
+<body>
+<a class="skip" href="#main">跳到主要内容</a>
+
+<div class="sticky-zone">
+  <div class="notice" role="status" aria-label="更新公告">
+    <div class="wrap">
+      <b>jxx cc每日</b>
+      <span class="sep">|</span>
+      <span>11月7日榜单已重算，口径说明随条目附出</span>
+      <span class="sep">|</span>
+      <a href="/#latest">查看当日变动</a>
+    </div>
+  </div>
+
+  <header class="site-header">
+    <div class="wrap header-in">
+      <a class="brand" href="/#top" aria-label="jxx cc每日 首页">
+        <svg viewBox="0 0 64 64" role="img" aria-hidden="true">
+          <rect width="64" height="64" rx="14" fill="#1f3a5f"/>
+          <path d="M18 45V19h6v9.5h16V19h6v26h-6V35.5H24V45z" fill="#f5b13f"/>
+          <rect x="18" y="47" width="28" height="3" rx="1.5" fill="#f5e3c3"/>
+        </svg>
+        <span class="brand-text">
+          <strong>jxx cc每日</strong>
+          <span>DAILY LOG</span>
+        </span>
+      </a>
+
+      <button class="menu-btn" id="menuBtn" type="button" aria-expanded="false" aria-controls="mainNav">菜单</button>
+
+      <nav class="main-nav" id="mainNav" aria-label="主题导航">
+        <ul>
+          <li><a href="/#overview">机制概览</a></li>
+          <li><a href="/#picks">今日精选</a></li>
+          <li><a href="/#latest">条目更新</a></li>
+          <li><a href="/#channels">分类频道</a></li>
+          <li><a href="/#analysis">深度解析</a></li>
+          <li><a href="/#guide">查看指南</a></li>
+          <li><a href="/#faq">常见问答</a></li>
+        </ul>
+      </nav>
+
+      <div class="search-box" role="search">
+        <label for="siteSearch" class="skip">站内查找</label>
+        <input id="siteSearch" type="search" placeholder="查条目、口径、日期" autocomplete="off">
+        <button type="button" id="searchBtn">查找</button>
+      </div>
+      <div class="search-feedback" id="searchFeedback" role="status" aria-live="polite"></div>
+    </div>
+  </header>
+</div>
+
+<main id="main">
+  <section class="hero" id="top">
+    <div class="hero-noise" aria-hidden="true"></div>
+    <div class="wrap">
+      <div class="hero-grid">
+        <div>
+          <span class="tagline"><i></i>2026年11月8日 · 周日更新</span>
+          <h1>jxx cc每日
+            <small>把每天的榜单变动拆开看：谁进了、谁退了、为什么变</small>
+          </h1>
+          <p class="hero-lead">每天上午10点前后生成一份条目名单，附带分值、来源与变动方向。11月7日版本共收录218个条目，其中41个为当日新进，29个发生口径调整。榜单不追求绝对排名，重点在于让每个位置都能被回查到当天的原始记录。</p>
+          <div class="hero-actions">
+            <a class="btn btn-primary" href="/#latest">看11月7日变动</a>
+            <a class="btn btn-ghost" href="/#analysis">读口径解析</a>
+          </div>
+          <ul class="hero-stats">
+            <li><strong>218</strong>当日条目</li>
+            <li><strong>41</strong>新进记录</li>
+            <li><strong>29</strong>口径调整</li>
+            <li><strong>30天</strong>可回溯窗口</li>
+          </ul>
+        </div>
+        <figure class="hero-art" aria-label="榜单分层示意图">
+          <svg viewBox="0 0 420 340" role="img" aria-labelledby="artTitle artDesc">
+            <title id="artTitle">每日榜单三层结构示意</title>
+            <desc id="artDesc">示意图展示稳定层、变动层与观察层三类条目在一天内的分布比例</desc>
+            <rect x="0" y="0" width="420" height="340" rx="16" fill="#f2efe7"/>
+            <rect x="26" y="26" width="368" height="70" rx="10" fill="#1f3a5f"/>
+            <text x="44" y="55" font-family="PingFang SC,Microsoft YaHei,sans-serif" font-size="15" fill="#f5e3c3" font-weight="700">稳定层 · 148 条</text>
+            <text x="44" y="79" font-family="PingFang SC,Microsoft YaHei,sans-serif" font-size="12" fill="#b9c6d8">连续7天位置不变，占当日 67.9%</text>
+            <rect x="26" y="110" width="230" height="86" rx="10" fill="#c8811a"/>
+            <text x="44" y="140" font-family="PingFang SC,Microsoft YaHei,sans-serif" font-size="15" fill="#221505" font-weight="700">变动层 · 41 条</text>
+            <text x="44" y="164" font-family="PingFang SC,Microsoft YaHei,sans-serif" font-size="12" fill="#3a2a10">新进、掉出、跨档移动</text>
+            <rect x="272" y="110" width="122" height="86" rx="10" fill="#2d5b8e"/>
+            <text x="288" y="140" font-family="PingFang SC,Microsoft YaHei,sans-serif" font-size="14" fill="#eef3fa" font-weight="700">观察层</text>
+            <text x="288" y="162" font-family="PingFang SC,Microsoft YaHei,sans-serif" font-size="12" fill="#c6d5e8">29 条待核</text>
+            <rect x="26" y="212" width="368" height="46" rx="10" fill="#ffffff" stroke="#cfc9bb"/>
+            <text x="44" y="241" font-family="PingFang SC,Microsoft YaHei,sans-serif" font-size="13" fill="#3a4459">口径调整记录按时间排列，可逐条回溯</text>
+            <rect x="26" y="272" width="176" height="42" rx="10" fill="#ffffff" stroke="#cfc9bb"/>
+            <text x="44" y="298" font-family="PingFang SC,Microsoft YaHei,sans-serif" font-size="13" fill="#3a4459">来源：日报存档</text>
+            <rect x="218" y="272" width="176" height="42" rx="10" fill="#ffffff" stroke="#cfc9bb"/>
+            <text x="236" y="298" font-family="PingFang SC,Microsoft YaHei,sans-serif" font-size="13" fill="#3a4459">生成时间 10:12</text>
+          </svg>
+          <figcaption>11月7日分层结果，数字取自当日日报存档</figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <div class="wrap">
+    <div class="layout">
+      <div class="main-col">
+
+        <!-- 领域概览 -->
+        <section class="section" id="overview">
+          <div class="sec-head">
+            <span class="kicker">OVERVIEW</span>
+            <h2>机制概览：一天的数据从哪来</h2>
+            <p>先看结构，再看名次</p>
+          </div>
+          <div class="overview">
+            <div class="ov-item"><strong>10:12</strong><span>11月7日生成时刻</span></div>
+            <div class="ov-item"><strong>3 层</strong><span>稳定 / 变动 / 观察</span></div>
+            <div class="ov-item"><strong>41 条</strong><span>当日新进</span></div>
+            <div class="ov-item"><strong>6 类</strong><span>口径标签</span></div>
+          </div>
+          <div class="grid grid-3">
+            <article class="card">
+              <h3><a href="/#latest">采集窗口：前一日18点至当日9点</a></h3>
+              <p>11月7日版本覆盖的时间段为11月6日18:00到11月7日09:00，落在窗口外的记录顺延到下一日。窗口内共捕获1,842条原始记录，去重后剩631条，再按准入规则过滤得到218条。</p>
+              <div class="meta"><span>口径：采集窗口</span><span>11月7日</span></div>
+            </article>
+            <article class="card">
+              <h3><a href="/#analysis">分值不是投票数</a></h3>
+              <p>条目分值由近7日频次、来源权重与变动幅度合成，频次占55%，来源占30%，变动占15%。这意味着一个当天刷屏但此前沉默的条目，未必压得过连续七天稳定的老条目。</p>
+              <div class="meta"><span>口径：分值构成</span><span>11月6日修订</span></div>
+            </article>
+            <article class="card">
+              <h3><a href="/#guide">三层结构的意义</a></h3>
+              <p>稳定层不代表优秀，只代表位置没动；变动层才承载当天的信息量。把三层拆开看，能避免把“没变化”误读成“没发生”。11月7日稳定层148条，变动层41条，观察层29条。</p>
+              <div class="meta"><span>口径：分层规则</span><span>沿用10月版本</span></div>
+            </article>
+          </div>
+        </section>
+
+        <!-- 精选内容推荐 -->
+        <section class="section" id="picks">
+          <div class="sec-head">
+            <span class="kicker">PICKS</span>
+            <h2>今日精选：值得逐条看的三个条目</h2>
+            <p>按信息量而非热度挑</p>
+          </div>
+          <div class="feature">
+            <article class="feature-main">
+              <img src="https://picsum.photos/seed/jxxdaily-pick1/720/420" width="720" height="420" loading="lazy" alt="日报存档桌面截图，左侧为条目列表，右侧为口径说明面板">
+              <div class="fm-body">
+                <span class="flag">当日最值得核对</span>
+                <h3><a href="/#analysis">“晨间阅读”条目从第9位升到第3位，跨度6位</a></h3>
+                <p>11月6日该条目位于第9，11月7日10:12生成时排第3。推动因素是两个来源同时更新，而非单项爆发：早读栏目在08:40前后连发两条，另一来源在09:05补了一条跟进。分值为78.4，比前一日高21.6。建议对照三天曲线看，单日跳升容易误判。</p>
+                <div class="meta"><span>条目编号 A-1107-03</span><span>分值 78.4</span><span>+21.6</span></div>
+              </div>
+            </article>
+            <div class="feature-side">
+              <article class="mini">
+                <h3><a href="/#latest">“旧闻重排”条目当日掉出前二十</a></h3>
+                <p>从前一日的第14跌到第27，分值52.1，降18.3。原因写在观察层备注里：来源侧删除了11月3日的一条原记录，导致频次回算。</p>
+                <div class="meta"><span>A-1107-19</span><span>52.1</span></div>
+              </article>
+              <article class="mini">
+                <h3><a href="/#guide">“口径变更”条目首次进入观察层</a></h3>
+                <p>该类目此前不进榜。11月7日起因准入规则新增一行说明而被纳入，分值暂记0，仅作观察。</p>
+                <div class="meta"><span>O-1107-07</span><span>观察中</span></div>
+              </article>
+              <article class="mini">
+                <h3><a href="/#faq">“连续七天”条目保持第15位</a></h3>
+                <p>位置不变，但分值从64.0微降到63.2，属于频次自然衰减，未触发提醒。</p>
+                <div class="meta"><span>A-1107-11</span><span>−0.8</span></div>
+              </article>
+            </div>
+          </div>
+        </section>
+
+        <!-- 最新更新 -->
+        <section class="section" id="latest">
+          <div class="sec-head">
+            <span class="kicker">LATEST</span>
+            <h2>条目更新：11月6日至11月8日</h2>
+            <p>按时间倒序，仅列可核对项</p>
+          </div>
+          <ul class="tight-list">
+            <li>
+              <time datetime="2026-11-08">11-08</time>
+              <div><b>“周日特刊”条目进入待核队列</b><small>08:30 提交，尚未纳入当日名单，预计11月8日10点后生成首版分值</small></div>
+            </li>
+            <li>
+              <time datetime="2026-11-07">11-07</time>
+              <div><b>11月7日版本生成，218条，新增41条</b><small>10:12 完成；其中29条挂口径调整标记，详情见观察层</small></div>
+            </li>
+            <li>
+              <time datetime="2026-11-07">11-07</time>
+              <div><b>“旧闻重排”来源侧删除1条原记录</b><small>09:05 回算后频次下调，位置由第14滑至第27</small></div>
+            </li>
+            <li>
+              <time datetime="2026-11-06">11-06</time>
+              <div><b>分值构成说明更新至第3版</b><small>18:40 发布，频次权重由50%调至55%，来源权重30%不变</small></div>
+            </li>
+            <li>
+              <time datetime="2026-11-05">11-05</time>
+              <div><b>“晨间阅读”条目首次进入前二十</b><small>当日10:15 生成，位列第18，三天后升至第3</small></div>
+            </li>
+            <li>
+              <time datetime="2026-11-04">11-04</time>
+              <div><b>观察层新增“口径变更”类目</b><small>16:20 起，准入规则调整引发的条目移入观察层，不占正式排名</small></div>
+            </li>
+          </ul>
+        </section>
+
+        <!-- 分类入口 -->
+        <section class="section" id="channels">
+          <div class="sec-head">
+            <span class="kicker">CHANNELS</span>
+            <h2>分类频道：按你关心的角度切</h2>
+            <p>每个频道对应一类可查条目</p>
+          </div>
+          <div class="chips">
+            <a class="chip" href="/#latest"><strong>11月7日榜单变动</strong><em>41 条</em></a>
+            <a class="chip" href="/#analysis"><strong>分值口径说明</strong><em>3 版</em></a>
+            <a class="chip" href="/#guide"><strong>首次查看流程</strong><em>5 步</em></a>
+            <a class="chip" href="/#faq"><strong>常见口径疑问</strong><em>7 问</em></a>
+            <a class="chip" href="/#rank"><strong>七日稳定榜</strong><em>148 条</em></a>
+            <a class="chip" href="/#comments"><strong>读者反馈与吐槽</strong><em>6 条</em></a>
+            <a class="chip" href="/#news"><strong>规则修订记录</strong><em>4 条</em></a>
+            <a class="chip" href="/#guide"><strong>原始记录回溯方法</strong><em>图文</em></a>
+            <a class="chip" href="/#analysis"><strong>来源权重对比</strong><em>表格</em></a>
+            <a class="chip" href="/#picks"><strong>当日精选条目</strong><em>3 条</em></a>
+            <a class="chip" href="/#overview"><strong>采集窗口说明</strong><em>1 篇</em></a>
+            <a class="chip" href="/#tags"><strong>相关推荐标签</strong><em>10 个</em></a>
+          </div>
+        </section>
+
+        <!-- 深度解析 -->
+        <section class="section" id="analysis">
+          <div class="sec-head">
+            <span class="kicker">ANALYSIS</span>
+            <h2>深度解析：单日跳升到底该不该信</h2>
+            <p>唯一主体阅读区，含可反驳判断</p>
+          </div>
+          <div class="analysis">
+            <p class="analysis-lead">结论先放这里：单日名次跳升超过5位的条目，约七成在三天内回落到原区间。这个比例来自9月1日至11月6日的67次跳升样本，其中47次在第三个交易日回到起跳点上下3位以内。</p>
+
+            <h3>一、把“跳升”拆成三种成因</h3>
+            <p>11月7日“晨间阅读”从第9到第3，跨度6位，属于典型的多来源共振。两个来源在38分钟内先后更新，频次项当日加满，带动总分上涨21.6。对照10月22日的“条目C”跳升，只由单一来源推动，三天后回落，路径完全不同。</p>
+            <p>按样本归因，跳升可分三类：多来源共振（占38%）、单一来源爆发（占41%）、规则变动误触发（占21%）。第三类最容易被误读成真实变化，实际是口径切换造成的假跳升。11月4日观察层新增“口径变更”类目，正是为了把这类条目挪出正式排名。</p>
+            <div class="verdict"><b>可反驳点：</b>如果第三天回落的样本比例低于五成，上述“七成”结论不成立。样本表已按日期列出，可逐条重算。</div>
+
+            <h3>二、三天回测数据长什么样</h3>
+            <table>
+              <caption>9月1日—11月6日跳升样本的三日回测（按成因分组）</caption>
+              <thead>
+                <tr><th>成因</th><th class="num">样本数</th><th class="num">三日回落</th><th class="num">回落比例</th><th>典型日期</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>多来源共振</td><td class="num">26</td><td class="num">15</td><td class="num">57.7%</td><td>10月22日</td></tr>
+                <tr><td>单一来源爆发</td><td class="num">27</td><td class="num">21</td><td class="num">77.8%</td><td>10月9日</td></tr>
+                <tr><td>规则变动误触发</td><td class="num">14</td><td class="num">11</td><td class="num">78.6%</td><td>11月4日</td></tr>
+              </tbody>
+            </table>
+            <p>数据说明一处差异：多来源共振的回落比例反而最低，57.7%，因为两个来源同时更新往往对应真实事件延续。单一来源爆发的77.8%回落，与直觉相反——声音大的往往站不住。这条结论已被10月9日至10月31日的19个样本独立验证过一次。</p>
+
+            <h3>三、11月6日到11月7日的一处规则差异</h3>
+            <div class="compare">
+              <div>
+                <h4><i style="background:#8b97a8"></i>第2版口径（11月5日前）</h4>
+                <ul>
+                  <li>频次权重 50%</li>
+                  <li>来源权重 30%</li>
+                  <li>变动权重 20%</li>
+                  <li>单条记录最多计3次</li>
+                </ul>
+              </div>
+              <div>
+                <h4><i style="background:#c8811a"></i>第3版口径（11月6日18:40起）</h4>
+                <ul>
+                  <li>频次权重 55%</li>
+                  <li>来源权重 30%</li>
+                  <li>变动权重 15%</li>
+                  <li>单条记录最多计2次，去重更严</li>
+                </ul>
+              </div>
+            </div>
+            <p>权重变动带来一个直接后果：连续七天稳定的条目在新口径下更容易守位，短期爆发条目的上升空间被压缩。11月6日18:40之后生成的名单，与当日10:12的版本不能直接比名次，这一点在条目脚注里有标注。</p>
+
+            <h3>四、判断方法：三个可核对的检查点</h3>
+            <ol class="steps">
+              <li><div><b>查生成时刻</b><p>榜单脚注标明生成时间，11月7日为10:12。同一天不同时刻生成的版本，名次不可混用。</p></div></li>
+              <li><div><b>看层位而非绝对值</b><p>条目是否在稳定层、变动层，比第几名更有信息量。11月7日变动层41条，是新信息的集中区。</p></div></li>
+              <li><div><b>对照三日曲线</b><p>单日名次容易受单条来源影响，拉三天看能过滤大部分噪声。9月样本里，只有持续三日以上的变化才值得记入变化日志。</p></div></li>
+            </ol>
+            <div class="pullquote">
+              “回落的条目并不等于虚假条目。多数时候，它只是把当天该有的关注度用完了，第二天自然让位。”
+              <cite>—— 11月6日社群讨论中的一句，转述自一位连续跟踪两个月的读者</cite>
+            </div>
+          </div>
+        </section>
+
+        <!-- 体验指南 -->
+        <section class="section" id="guide">
+          <div class="sec-head">
+            <span class="kicker">GUIDE</span>
+            <h2>体验指南：第一次看日报怎么入手</h2>
+            <p>五步走完，不用跳着读</p>
+          </div>
+          <ol class="steps">
+            <li><div><b>先看公告条的日期</b><p>顶部公告条写明版本与生成时间。11月7日版本，10:12生成，218条。日期不对，后面的名次都不用看。</p></div></li>
+            <li><div><b>再读分层图</b><p>稳定层148条、变动层41条、观察层29条。先确认变动层，那里才是当天发生的事。</p></div></li>
+            <li><div><b>挑三条看脚注</b><p>每个条目脚注带编号与分值，例如A-1107-03，分值78.4。编号能定位到原始记录。</p></div></li>
+            <li><div><b>遇到名次与分值不匹配，查口径版本</b><p>第2版与第3版权重不同，跨版本比较会得出错误结论。11月6日18:40是分界线。</p></div></li>
+            <li><div><b>把疑点记进观察清单</b><p>观察层条目暂不参与排名，但会保留记录。11月7日观察层有29条，其中19条与规则变动有关。</p></div></li>
+          </ol>
+        </section>
+
+        <!-- 榜单 -->
+        <section class="section" id="rank">
+          <div class="sec-head">
+            <span class="kicker">RANK</span>
+            <h2>七日稳定榜：位置没动的条目</h2>
+            <p>连续七日不变，按分值取前八</p>
+          </div>
+          <ol class="rank">
+            <li><b>早间栏目合集</b><span>分值 86.5</span></li>
+            <li><b>周一回顾条目</b><span>分值 82.1</span></li>
+            <li><b>长期跟进记录</b><span>分值 79.8</span></li>
+            <li><b>固定栏目索引</b><span>分值 75.4</span></li>
+            <li><b>连续七天条目 A-1107-11</b><span>分值 63.2</span></li>
+            <li><b>周清单条目</b><span>分值 61.7</span></li>
+            <li><b>旧版存档索引</b><span>分值 58.9</span></li>
+            <li><b>常规跟进条目</b><span>分值 56.3</span></li>
+          </ol>
+          <p style="font-size:var(--fs-5);color:var(--ink-3);margin-top:10px">稳定榜每日18:00重算，与前一日比对后更新；11月7日榜单第5位分值为63.2，较前日降0.8。</p>
+        </section>
+
+        <!-- FAQ -->
+        <section class="section" id="faq">
+          <div class="sec-head">
+            <span class="kicker">FAQ</span>
+            <h2>常见问答：口径、时间与核对方式</h2>
+            <p>答案主语是条目与规则</p>
+          </div>
+          <div class="faq">
+            <details>
+              <summary>条目分值为什么和我预期的不一样？</summary>
+              <div class="ans">分值由频次55%、来源30%、变动15%三项合成，与读者主观感受无关。11月6日18:40起改用第3版权重，同一批数据的得分会比第2版低2到6分不等。比较时先确认版本。</div>
+            </details>
+            <details>
+              <summary>11月7日的218条与11月6日的203条差在哪？</summary>
+              <div class="ans">差在41条新进与26条掉出。新进条目里有12条来自“口径变更”类目，属于准入规则调整后的首次纳入，并不对应新事件。掉出的26条中，9条因来源侧删除原记录导致频次回算不足。</div>
+            </details>
+            <details>
+              <summary>为什么观察层条目不参与排名？</summary>
+              <div class="ans">观察层条目要么来源单一，要么命中口径变更标记，证据链不完整。11月7日观察层29条，其中19条是因规则变动被移入，10条是来源不足两条的记录。等次日复核后再决定是否进入正式名单。</div>
+            </details>
+            <details>
+              <summary>三天曲线在哪看？</summary>
+              <div class="ans">每个条目脚注的编号可以回查近7日记录，曲线按生成时刻对齐。跨版本比较时，11月6日18:40前后要用不同基线，否则会看到虚假的断点。</div>
+            </details>
+            <details>
+              <summary>“晨间阅读”的跳升能持续吗？</summary>
+              <div class="ans">按9月以来26个多来源共振样本，57.7%在三天内回落，但回落幅度普遍小于单一来源爆发类。该条目若在11月8日、9日仍保持前五，可视为延续；若10日跌回第9附近，属于样本内的正常回落。</div>
+            </details>
+            <details>
+              <summary>来源侧删除原记录后，旧条目会怎样？</summary>
+              <div class="ans">频次项按现有记录重算，总分下调，位置可能大幅下滑。“旧闻重排”条目从第14到第27即属此类，分值由70.4降到52.1，降幅18.3。重算结果会写入变更日志，保留原分值供对照。</div>
+            </details>
+            <details>
+              <summary>公告条的更新信息多久同步一次？</summary>
+              <div class="ans">每次生成新版本后30分钟内同步。11月7日版本10:12生成，公告条10:35更新；11月8日版本预计10点后生成，公告条随之刷新。跨日期的旧公告不保留在顶部。</div>
+            </details>
+          </div>
+        </section>
+
+        <!-- 用户评论 -->
+        <section class="section" id="comments">
+          <div class="sec-head">
+            <span class="kicker">FEEDBACK</span>
+            <h2>读者反馈：有人叫好，也有人嫌麻烦</h2>
+            <p>来自11月5日至11月7日的留言</p>
+          </div>
+          <div class="comments">
+            <article class="comment">
+              <header><span class="avatar" aria-hidden="true">林</span><span class="who">林默</span><time class="when" datetime="2026-11-07">11月7日 11:02</time></header>
+              <p>分层图这个做法是对的。11月7日变动层41条，我一眼扫完，比翻两百多条省时间。稳定层里那些位置没动的，确实没必要占用注意力。</p>
+              <span class="ref">指向：11月7日分层结果</span>
+            </article>
+            <article class="comment">
+              <header><span class="avatar" aria-hidden="true">周</span><span class="who">周予安</span><time class="when" datetime="2026-11-07">11月7日 14:26</time></header>
+              <p>“晨间阅读”从第9到第3，我核对了两处来源更新时间，08:40和09:05对得上。但分值加21.6是不是偏高了？按第3版权重，频次项加满也就18分左右。</p>
+              <span class="ref">指向：条目 A-1107-03 的分值构成</span>
+            </article>
+            <article class="comment">
+              <header><span class="avatar" aria-hidden="true">陈</span><span class="who">陈迟</span><time class="when" datetime="2026-11-06">11月6日 19:48</time></header>
+              <p class="tone-mid">口径改来改去，第2版刚看熟又换第3版。11月6日18:40前后两份名单名次差了一截，普通读者哪记得住分界线。</p>
+              <span class="ref">指向：第3版口径切换时间</span>
+            </article>
+            <article class="comment">
+              <header><span class="avatar" aria-hidden="true">吴</span><span class="who">吴见山</span><time class="when" datetime="2026-11-06">11月6日 21:10</time></header>
+              <p>“旧闻重排”掉到第27不冤。来源那边删了11月3日的原记录，频次回算自然不够。这种连锁调整愿意写明原因，比只给结果强。</p>
+              <span class="ref">指向：条目 A-1107-19 的回落原因</span>
+            </article>
+            <article class="comment">
+              <header><span class="avatar" aria-hidden="true">许</span><span class="who">许南</span><time class="when" datetime="2026-11-05">11月5日 09:37</time></header>
+              <p>体验指南第三步说的脚注编号，我照着找了，确实能回溯到原始记录。不过五天前的记录点进去只有摘要，细节得自己翻，这点可以再明说。</p>
+              <span class="ref">指向：体验指南第三步</span>
+            </article>
+            <article class="comment">
+              <header><span class="avatar" aria-hidden="true">方</span><span class="who">方知远</span><time class="when" datetime="2026-11-05">11月5日 22:15</time></header>
+              <p>三天回测那张表，多来源共振回落57.7%这个数有点意思。直觉上来源多的应该更稳，数据反过来说了另一件事。样本能不能再拉长一点看。</p>
+              <span class="ref">指向：三日回测数据表</span>
+            </article>
+          </div>
+        </section>
+
+        <!-- 相关资讯 -->
+        <section class="section" id="news">
+          <div class="sec-head">
+            <span class="kicker">NEWS</span>
+            <h2>相关资讯：规则与版本修订</h2>
+            <p>只记修订动作，不重复榜单内容</p>
+          </div>
+          <div class="news">
+            <article>
+              <h3><a href="/#analysis">频次权重上调至55%，第3版口径生效</a></h3>
+              <p>11月6日18:40发布的第3版将频次权重由50%调到55%，变动权重同步从20%降到15%。官方在脚注中说明，调整是为了抑制单日爆发条目的过度上升。</p>
+              <time datetime="2026-11-06">11月6日 18:40</time>
+            </article>
+            <article>
+              <h3><a href="/#faq">观察层新增“口径变更”类目</a></h3>
+              <p>11月4日16:20起，因准入规则调整而被纳入的条目统一移入观察层，不参与正式排名。当日首批移入7条，后续两天累计19条。</p>
+              <time datetime="2026-11-04">11月4日 16:20</time>
+            </article>
+            <article>
+              <h3><a href="/#latest">“旧闻重排”触发回算，来源侧删除原记录</a></h3>
+              <p>11月7日09:05，来源侧删除11月3日的一条原记录，该条目频次项重算后总分从70.4降到52.1，位置由第14滑至第27。变更日志已记录原分值与新分值。</p>
+              <time datetime="2026-11-07">11月7日 09:05</time>
+            </article>
+            <article>
+              <h3><a href="/#guide">周日特刊提交，待11月8日生成首版</a></h3>
+              <p>11月8日08:30提交的“周日特刊”条目已进入待核队列，尚未纳入当日名单。按流程，10点后生成首版分值，若来源不足两条，将先进入观察层。</p>
+              <time datetime="2026-11-08">11月8日 08:30</time>
+            </article>
+          </div>
+        </section>
+
+        <!-- 相关推荐 -->
+        <section class="section" id="tags">
+          <div class="sec-head">
+            <span class="kicker">TAGS</span>
+            <h2>相关推荐：按具体词继续查</h2>
+            <p>十个可直接检索的标签</p>
+          </div>
+          <ul class="tags">
+            <li><a href="/#latest">11月7日榜单变动</a></li>
+            <li><a href="/#analysis">分值权重第3版</a></li>
+            <li><a href="/#faq">观察层移入规则</a></li>
+            <li><a href="/#rank">七日稳定榜</a></li>
+            <li><a href="/#picks">晨间阅读跳升</a></li>
+            <li><a href="/#news">来源侧删除回算</a></li>
+            <li><a href="/#guide">脚注编号回溯</a></li>
+            <li><a href="/#comments">读者核对反馈</a></li>
+            <li><a href="/#analysis">三日回测样本</a></li>
+            <li><a href="/#overview">采集窗口时间</a></li>
+          </ul>
+        </section>
+
+        <!-- 补充板块：可信度分层 -->
+        <section class="section" id="credibility">
+          <div class="sec-head">
+            <span class="kicker">TRUST</span>
+            <h2>可信度分层：哪些结论能直接引用</h2>
+            <p>事实、回应、转述、推测分开摆</p>
+          </div>
+          <div class="grid grid-2">
+            <article class="card">
+              <h3>可直接引用的事实</h3>
+              <dl class="fact-row">
+                <dt>生成时间</dt><dd>11月7日 10:12</dd>
+                <dt>条目总数</dt><dd>218 条</dd>
+                <dt>新进</dt><dd>41 条</dd>
+                <dt>口径调整</dt><dd>29 条</dd>
+                <dt>版本权重</dt><dd>频次 55% / 来源 30% / 变动 15%</dd>
+              </dl>
+            </article>
+            <article class="card">
+              <h3>待复核的回应与推测</h3>
+              <dl class="fact-row">
+                <dt>回应</dt><dd>“晨间阅读”分值加21.6的解释来自条目脚注，尚未见独立说明</dd>
+                <dt>转述</dt><dd>社群讨论中“回落不等于虚假”的说法，未经原作者确认原文</dd>
+                <dt>推测</dt><dd>周日特刊若来源充足，可能进入变动层，目前仅为待核状态</dd>
+              </dl>
+            </article>
+          </div>
+        </section>
+
+      </div>
+
+      <!-- 侧栏 -->
+      <aside class="side-col" aria-label="辅助导航与索引">
+        <nav class="side-card" aria-label="栏目快速跳转">
+          <h3>栏目导航</h3>
+          <ul class="side-nav" id="sideNav">
+            <li><a href="/#overview">机制概览</a></li>
+            <li><a href="/#picks">今日精选</a></li>
+            <li><a href="/#latest">条目更新</a></li>
+            <li><a href="/#channels">分类频道</a></li>
+            <li><a href="/#analysis">深度解析</a></li>
+            <li><a href="/#guide">体验指南</a></li>
+            <li><a href="/#rank">七日稳定榜</a></li>
+            <li><a href="/#faq">常见问答</a></li>
+            <li><a href="/#comments">读者反馈</a></li>
+            <li><a href="/#news">相关资讯</a></li>
+            <li><a href="/#credibility">可信度分层</a></li>
+          </ul>
+        </nav>
+        <section class="side-card">
+          <h3>当日三个关键数字</h3>
+          <ul class="side-list">
+            <li><a href="/#analysis">跳升跨度 6 位</a><small>晨间阅读，第9到第3</small></li>
+            <li><a href="/#latest">回落 14 位</a><small>旧闻重排，第14到第27</small></li>
+            <li><a href="/#faq">观察层 29 条</a><small>其中19条因规则变动</small></li>
+          </ul>
+        </section>
+        <section class="side-card">
+          <h3>版本时间线</h3>
+          <ul class="side-list">
+            <li><a href="/#news">11月6日 18:40</a><small>第3版口径生效</small></li>
+            <li><a href="/#news">11月4日 16:20</a><small>观察层新增类目</small></li>
+            <li><a href="/#latest">11月7日 10:12</a><small>218条版本生成</small></li>
+          </ul>
+        </section>
+      </aside>
+    </div>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-grid">
+      <div>
+        <div class="footer-brand">
+          <svg viewBox="0 0 64 64" role="img" aria-hidden="true">
+            <rect width="64" height="64" rx="14" fill="#f5b13f"/>
+            <path d="M18 45V19h6v9.5h16V19h6v26h-6V35.5H24V45z" fill="#16202f"/>
+          </svg>
+          <strong>jxx cc每日</strong>
+        </div>
+        <p>把每天的名单变化拆成可回查的层与条目，名次只是入口，口径与记录才是落点。</p>
+        <p>示例数据说明：页面条目、编号、分值与读者留言均为演示用示例，日期落在2026年11月8日及此前30天内。</p>
+      </div>
+      <div>
+        <h3>机制与口径</h3>
+        <ul>
+          <li><a href="/#overview">采集窗口</a></li>
+          <li><a href="/#analysis">分值权重第3版</a></li>
+          <li><a href="/#credibility">可信度分层</a></li>
+          <li><a href="/#news">规则修订记录</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3>条目与榜单</h3>
+        <ul>
+          <li><a href="/#latest">11月7日条目更新</a></li>
+          <li><a href="/#rank">七日稳定榜</a></li>
+          <li><a href="/#picks">今日精选条目</a></li>
+          <li><a href="/#channels">分类频道入口</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3>使用与反馈</h3>
+        <ul>
+          <li><a href="/#guide">首次查看流程</a></li>
+          <li><a href="/#faq">常见口径问答</a></li>
+          <li><a href="/#comments">读者反馈</a></li>
+          <li><a href="/#tags">相关推荐标签</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>更新：11月7日10:12版本与11月8日08:30待核条目，对应正文条目更新板块</span>
+      <span>内容为示例数据，不构成实际排名依据</span>
+      <span>© 2026 jxx cc每日</span>
+    </div>
+  </div>
+</footer>
+
+<button class="to-top" id="toTop" type="button" aria-label="回到顶部">↑</button>
+
+<script>
+(function(){
+  var menuBtn = document.getElementById('menuBtn');
+  var mainNav = document.getElementById('mainNav');
+  if(menuBtn && mainNav){
+    menuBtn.addEventListener('click', function(){
+      var open = mainNav.classList.toggle('open');
+      menuBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    });
+    mainNav.addEventListener('click', function(e){
+      if(e.target.tagName === 'A' && window.matchMedia('(max-width:760px)').matches){
+        mainNav.classList.remove('open');
+        menuBtn.setAttribute('aria-expanded','false');
+      }
+    });
+  }
+
+  var toTop = document.getElementById('toTop');
+  window.addEventListener('scroll', function(){
+    if(window.scrollY > 480){ toTop.classList.add('show'); }
+    else { toTop.classList.remove('show'); }
+  }, {passive:true});
+  toTop.addEventListener('click', function(){
+    window.scrollTo({top:0, behavior:'smooth'});
+  });
+
+  var input = document.getElementById('siteSearch');
+  var btn = document.getElementById('searchBtn');
+  var feedback = document.getElementById('searchFeedback');
+  function clearMarks(){
+    document.querySelectorAll('mark').forEach(function(m){
+      var t = document.createTextNode(m.textContent);
+      m.parentNode.replaceChild(t, m);
+    });
+  }
+  function doSearch(){
+    clearMarks();
+    var q = (input.value || '').trim();
+    if(!q){ feedback.textContent = '请输入条目编号、日期或口径关键词。'; return; }
+    var main = document.getElementById('main');
+    var walker = document.createTreeWalker(main, NodeFilter.SHOW_TEXT, {
+      acceptNode: function(n){
+        if(!n.nodeValue.trim()) return NodeFilter.FILTER_REJECT;
+        var p = n.parentNode.nodeName;
+        if(p === 'SCRIPT' || p === 'STYLE' || p === 'MARK' || p === 'SUMMARY') return NodeFilter.FILTER_REJECT;
+        return n.nodeValue.indexOf(q) > -1 ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT;
+      }
+    });
+    var nodes = [];
+    while(walker.nextNode()){ nodes.push(walker.currentNode); }
+    if(!nodes.length){
+      feedback.textContent = '没有找到“' + q + '”。可试：11月7日、第3版、A-1107-03、观察层。';
+      return;
+    }
+    nodes.slice(0, 40).forEach(function(n){
+      var idx = n.nodeValue.indexOf(q);
+      var before = n.nodeValue.slice(0, idx);
+      var hit = n.nodeValue.slice(idx, idx + q.length);
+      var after = n.nodeValue.slice(idx + q.length);
+      var frag = document.createDocumentFragment();
+      if(before) frag.appendChild(document.createTextNode(before));
+      var mk = document.createElement('mark');
+      mk.textContent = hit;
+      frag.appendChild(mk);
+      if(after) frag.appendChild(document.createTextNode(after));
+      n.parentNode.replaceChild(frag, n);
+    });
+    feedback.textContent = '找到 ' + nodes.length + ' 处“' + q + '”，已高亮前 40 处。';
+    var first = main.querySelector('mark');
+    if(first){ first.scrollIntoView({behavior:'smooth', block:'center'}); }
+  }
+  btn.addEventListener('click', doSearch);
+  input.addEventListener('keydown', function(e){
+    if(e.key === 'Enter'){ e.preventDefault(); doSearch(); }
+  });
+
+  var navLinks = Array.prototype.slice.call(document.querySelectorAll('#sideNav a'));
+  var targets = navLinks.map(function(a){
+    var id = a.getAttribute('href').split('#')[1];
+    return document.getElementById(id);
+  }).filter(Boolean);
+  if('IntersectionObserver' in window && targets.length){
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(en){
+        if(en.isIntersecting){
+          navLinks.forEach(function(a){
+            a.classList.toggle('active', a.getAttribute('href') === '/#' + en.target.id);
+          });
+        }
+      });
+    }, {rootMargin:'-120px 0px -65% 0px', threshold:0});
+    targets.forEach(function(t){ io.observe(t); });
+  }
+})();
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "jxx cc每日",
+  "description": "梳理每日榜单的生成规则、口径差异与查看方法，含近30天条目变动与读者反馈。",
+  "inLanguage": "zh-CN",
+  "dateModified": "2026-11-08"
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "条目分值为什么和我预期的不一样？",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "分值由频次55%、来源30%、变动15%三项合成，与读者主观感受无关。11月6日18:40起改用第3版权重，同一批数据的得分会比第2版低2到6分不等。"
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "11月7日的218条与11月6日的203条差在哪？",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "差在41条新进与26条掉出。新进条目里有12条来自口径变更类目，属于准入规则调整后的首次纳入，并不对应新事件。"
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "为什么观察层条目不参与排名？",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "观察层条目要么来源单一，要么命中口径变更标记，证据链不完整。11月7日观察层29条，其中19条因规则变动被移入。"
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "三天曲线在哪看？",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "每个条目脚注的编号可以回查近7日记录，曲线按生成时刻对齐。跨版本比较时，11月6日18:40前后要用不同基线。"
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "晨间阅读的跳升能持续吗？",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "按9月以来26个多来源共振样本，57.7%在三天内回落，但回落幅度普遍小于单一来源爆发类。该条目若在11月8日、9日仍保持前五，可视为延续。"
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "来源侧删除原记录后，旧条目会怎样？",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "频次项按现有记录重算，总分下调，位置可能大幅下滑。旧闻重排条目从第14到第27即属此类，分值由70.4降到52.1。"
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "公告条的更新信息多久同步一次？",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "每次生成新版本后30分钟内同步。11月7日版本10:12生成，公告条10:35更新；11月8日版本预计10点后生成。"
+      }
+    }
+  ]
+}
+</script>
+</body>
+  </html>
